@@ -1,0 +1,14 @@
+{
+    "name": "tcopestake/ephemeris",
+    "description": "",
+    "require": {
+        "symfony/console": "*",
+        "symfony/yaml": "*"
+    },
+
+    "autoload": {
+        "psr-0": {
+            "Ephemeris\\": "app"
+        }
+    }
+}
