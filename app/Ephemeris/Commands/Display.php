@@ -97,6 +97,10 @@ class Display extends \Ephemeris\CommandScaffolding
         foreach ($log->getEntries() as $entry) {
             $tags = json_decode($entry[3], true);
             
+            if (empty($tags)) {
+                $tags = array('(Unspecified)');
+            }
+            
             foreach ($tags as $tag) {
                 $tag = trim($tag);
                 
@@ -104,7 +108,7 @@ class Display extends \Ephemeris\CommandScaffolding
                     if(!isset($groups[$tag])) {
                         $groups[$tag] = 0;
                     }
-                    
+
                     $groups[$tag] += (real)$entry[1];
                 }
             }
@@ -112,8 +116,12 @@ class Display extends \Ephemeris\CommandScaffolding
         
         //
         
+        $totalMinutes = 0;
+        
         foreach ($groups as $group => $minutes) {
             $hours = round($minutes / 60, 2);
+            
+            $totalMinutes += $minutes;
             
             $row = array(
                 $group,
@@ -127,9 +135,23 @@ class Display extends \Ephemeris\CommandScaffolding
             $this->setRow($row);
         }
         
-        // 
+        // Output table.
 
         $this->writeTable($output);
+        
+        // Show totals.
+        
+        $totalHours = round($totalMinutes / 60, 2);
+        
+        $message = 'Total hours: '.number_format($totalHours, 2);
+        
+        if ($expectedMinutes) {
+            $expectedPercentage = round(($totalMinutes / $expectedMinutes) * 100, 1);
+            
+            $message .= " ({$expectedPercentage}%)";
+        }
+
+        $output->writeln("\n    {$message}");
     }
     
     protected function displayNormal($input, $output, $log, $expectedMinutes) {
@@ -138,14 +160,18 @@ class Display extends \Ephemeris\CommandScaffolding
         } else {
             $this->setHeaders('Task', 'Hours', 'Tags', 'Logged');
         }
+        
+        $totalMinutes = 0;
 
         foreach ($log->getEntries() as $entry) {
             $minutes = (real)$entry[1];
             $hours = round($minutes / 60, 2);
+            
+            $totalMinutes += $minutes;
 
             $row = array(
                 $entry[0],
-                $hours
+                number_format($hours, 2),
             );
 
             if ($expectedMinutes) {
@@ -161,6 +187,22 @@ class Display extends \Ephemeris\CommandScaffolding
             $this->setRow($row);
         }
 
+        // Output table.
+
         $this->writeTable($output);
+
+        // Show totals.
+        
+        $totalHours = round($totalMinutes / 60, 2);
+        
+        $message = 'Total hours: '.number_format($totalHours, 2);
+        
+        if ($expectedMinutes) {
+            $expectedPercentage = round(($totalMinutes / $expectedMinutes) * 100, 1);
+            
+            $message .= " ({$expectedPercentage}%)";
+        }
+
+        $output->writeln("\n    {$message}");
     }
 }
