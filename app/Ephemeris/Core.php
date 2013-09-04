@@ -6,6 +6,12 @@ class Core
 {
     public static function startup($baseDirectory)
     {
+        // Work from base directory.
+        
+        chdir($baseDirectory);
+        
+        // Load config.
+
         Config::load('config/config.yml');
 
         // Configure timezone.
@@ -17,11 +23,5 @@ class Core
                 throw new \RuntimeException('Invalid timezone.');
             }
         }
-        
-        // Work from base directory.
-        
-        chdir($baseDirectory);
-        
-        // 
     }
 }
