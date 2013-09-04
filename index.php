@@ -1,21 +1,25 @@
 <?php
 
-date_default_timezone_set('Europe/London');
-
 include 'vendor/autoload.php';
 
-\Ephemeris\Config::load('config/config.yml');
+try {
+    \Ephemeris\Core::startup(__DIR__);
 
-// 
+    // 
 
-$application = new \Symfony\Component\Console\Application();
+    $application = new \Symfony\Component\Console\Application;
 
-$application->add(
-    new \Ephemeris\Commands\Display
-);
+    $application->add(
+        new \Ephemeris\Commands\Display
+    );
 
-$application->add(
-    new \Ephemeris\Commands\Log
-);
+    $application->add(
+        new \Ephemeris\Commands\Log
+    );
 
-$application->run();
+    $application->run();
+} catch (\Exception $exception) {
+    $output = new \Symfony\Component\Console\Output\ConsoleOutput;
+
+    $output->writeln("\nConfig error: {$exception->getMessage()}");
+}
