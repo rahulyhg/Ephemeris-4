@@ -15,6 +15,9 @@ class Display extends \Ephemeris\CommandScaffolding
         $this
             ->setName('display')
             ->setDescription('Show logs for a given date')
+            ->setAliases(
+                array('show')
+            )
             ->addArgument(
                 'date',
                 InputArgument::OPTIONAL,
